@@ -143,7 +143,11 @@ STATIC mp_obj_t esp32_rmt_deinit(mp_obj_t self_in) {
     if (self->pin != -1) { // Check if channel has already been deinitialised.
         rmt_driver_uninstall(self->channel_id);
         self->pin = -1; // -1 to indicate RMT is unused
+#if MICROPY_MALLOC_USES_ALLOCATED_SIZE
+        m_free(self->items, self->num_items * sizeof(rmt_item32_t *));
+#else
         m_free(self->items);
+#endif
     }
     return mp_const_none;
 }
@@ -240,7 +244,11 @@ STATIC mp_obj_t esp32_rmt_write_pulses(size_t n_args, const mp_obj_t *args) {
 
     mp_uint_t num_items = (num_pulses / 2) + (num_pulses % 2);
     if (num_items > self->num_items) {
+#if MICROPY_MALLOC_USES_ALLOCATED_SIZE
+        self->items = (rmt_item32_t *)m_realloc(self->items, self->num_items * sizeof(rmt_item32_t *), num_items * sizeof(rmt_item32_t *));
+#else
         self->items = (rmt_item32_t *)m_realloc(self->items, num_items * sizeof(rmt_item32_t *));
+#endif
         self->num_items = num_items;
     }
 

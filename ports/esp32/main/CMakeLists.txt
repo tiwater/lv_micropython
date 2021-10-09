@@ -1,7 +1,18 @@
 # Set location of base MicroPython directory.
 if(NOT MICROPY_DIR)
-    get_filename_component(MICROPY_DIR ${PROJECT_DIR}/../.. ABSOLUTE)
+    if (DEFINED $ENV{MICROPY_DIR})
+        set(MICROPY_DIR $ENV{MICROPY_DIR})
+    else()
+        get_filename_component(MICROPY_DIR ${PROJECT_DIR}/../.. ABSOLUTE)
+    endif()
 endif()
+set(MOD_T1_DIR ${PROJECT_DIR}/mod-T1)
+
+if(NOT DEFINED MICROPY_ADF_MOD_DIR)
+    get_filename_component(MICROPY_ADF_MOD_DIR $ENV{ADF_PATH}/micropython_adf/mod ABSOLUTE)
+endif()
+
+set(LLSYNC_PATH $ENV{LLSYNC_PATH})
 
 # Include core source components.
 include(${MICROPY_DIR}/py/py.cmake)
@@ -50,7 +61,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/usb_serial_jtag.c
     ${PROJECT_DIR}/gccollect.c
     ${PROJECT_DIR}/mphalport.c
-    ${PROJECT_DIR}/fatfs_port.c
+#    ${PROJECT_DIR}/fatfs_port.c
     ${PROJECT_DIR}/help.c
     ${PROJECT_DIR}/modutime.c
     ${PROJECT_DIR}/moduos.c
@@ -68,7 +79,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/modnetwork.c
     ${PROJECT_DIR}/network_lan.c
     ${PROJECT_DIR}/network_ppp.c
-    ${PROJECT_DIR}/mpnimbleport.c
+#    ${PROJECT_DIR}/mpnimbleport.c
     ${PROJECT_DIR}/modsocket.c
     ${PROJECT_DIR}/modesp.c
     ${PROJECT_DIR}/esp32_nvs.c
@@ -83,6 +94,10 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/machine_sdcard.c
 )
 
+include(${MOD_T1_DIR}/mp_mod_t1.cmake)
+include(${MICROPY_ADF_MOD_DIR}/mp_src.cmake)
+include(${LLSYNC_PATH}/mkrules.cmake)
+
 # Include LVGL bindings rules
 if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     include(${MICROPY_DIR}/lib/lv_bindings/mkrules.cmake)
@@ -95,6 +110,7 @@ set(MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_SHARED}
     ${MICROPY_SOURCE_LIB}
     ${MICROPY_SOURCE_PORT}
+    ${LLSYNC_SRC}
     ${LV_SRC}
 )
 
@@ -128,6 +144,8 @@ set(IDF_COMPONENTS
     esp-tls
     nghttp
 )
+
+include(${MICROPY_ADF_MOD_DIR}/mp_mod.cmake)
 
 if(IDF_VERSION_MINOR GREATER_EQUAL 1)
     list(APPEND IDF_COMPONENTS esp_netif)
@@ -166,6 +184,7 @@ idf_component_register(
         ${MICROPY_SOURCE_LIB}
         ${MICROPY_SOURCE_DRIVERS}
         ${MICROPY_SOURCE_PORT}
+        ${LLSYNC_SRC}
         ${LV_SRC}
     INCLUDE_DIRS
         ${MICROPY_INC_CORE}
@@ -173,6 +192,7 @@ idf_component_register(
         ${MICROPY_PORT_DIR}
         ${MICROPY_BOARD_DIR}
         ${CMAKE_BINARY_DIR}
+        ${LLSYNC_INC}
         ${LV_INCLUDE}
     REQUIRES
         ${IDF_COMPONENTS}
@@ -201,6 +221,7 @@ target_compile_options(${MICROPY_TARGET} PUBLIC
     -Wno-clobbered
     -Wno-deprecated-declarations
     -Wno-missing-field-initializers
+    -Wno-error=maybe-uninitialized
 )
 
 # Add additional extmod and usermod components.

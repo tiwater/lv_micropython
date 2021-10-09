@@ -3380,7 +3380,7 @@ static FRESULT validate (   /* Returns FR_OK or FR_INVALID_OBJECT */
 /* Mount/Unmount a Logical Drive                                         */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_mount (
+FRESULT ff_mount (
     FATFS* fs           /* Pointer to the file system object to mount */
 )
 {
@@ -3396,7 +3396,7 @@ FRESULT f_mount (
 }
 
 
-FRESULT f_umount (
+FRESULT ff_umount (
     FATFS* fs                   /* Pointer to the file system object to unmount */
 )
 {
@@ -3416,7 +3416,7 @@ FRESULT f_umount (
 /* Open or Create a File                                                 */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_open (
+FRESULT ff_open (
     FATFS *fs,
     FIL* fp,            /* Pointer to the blank file object */
     const TCHAR* path,  /* Pointer to the file name */
@@ -3606,7 +3606,7 @@ FRESULT f_open (
 /* Read File                                                             */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_read (
+FRESULT ff_read (
     FIL* fp,    /* Pointer to the file object */
     void* buff, /* Pointer to data buffer */
     UINT btr,   /* Number of bytes to read */
@@ -3706,7 +3706,7 @@ FRESULT f_read (
 /* Write File                                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_write (
+FRESULT ff_write (
     FIL* fp,            /* Pointer to the file object */
     const void* buff,   /* Pointer to the data to be written */
     UINT btw,           /* Number of bytes to write */
@@ -3827,7 +3827,7 @@ FRESULT f_write (
 /* Synchronize the File                                                  */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_sync (
+FRESULT ff_sync (
     FIL* fp     /* Pointer to the file object */
 )
 {
@@ -3908,7 +3908,7 @@ FRESULT f_sync (
 /* Close File                                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_close (
+FRESULT ff_close (
     FIL* fp     /* Pointer to the file object to be closed */
 )
 {
@@ -3916,7 +3916,7 @@ FRESULT f_close (
     FATFS *fs;
 
 #if !FF_FS_READONLY
-    res = f_sync(fp);                   /* Flush cached data */
+    res = ff_sync(fp);                   /* Flush cached data */
     if (res == FR_OK)
 #endif
     {
@@ -3944,7 +3944,7 @@ FRESULT f_close (
 /* Change Current Directory or Current Drive, Get Current Directory      */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_chdir (
+FRESULT ff_chdir (
     FATFS *fs,
     const TCHAR* path   /* Pointer to the directory path */
 )
@@ -4006,7 +4006,7 @@ FRESULT f_chdir (
 
 
 #if FF_FS_RPATH >= 2
-FRESULT f_getcwd (
+FRESULT ff_getcwd (
     FATFS *fs,
     TCHAR* buff,    /* Pointer to the directory path */
     UINT len        /* Size of buff in unit of TCHAR */
@@ -4106,7 +4106,7 @@ FRESULT f_getcwd (
 /* Seek File Read/Write Pointer                                          */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_lseek (
+FRESULT ff_lseek (
     FIL* fp,        /* Pointer to the file object */
     FSIZE_t ofs     /* File pointer from top of file */
 )
@@ -4267,7 +4267,7 @@ FRESULT f_lseek (
 /* Create a Directory Object                                             */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_opendir (
+FRESULT ff_opendir (
     FATFS *fs,
     DIR* dp,            /* Pointer to directory object to create */
     const TCHAR* path   /* Pointer to the directory path */
@@ -4333,7 +4333,7 @@ FRESULT f_opendir (
 /* Close Directory                                                       */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_closedir (
+FRESULT ff_closedir (
     DIR *dp     /* Pointer to the directory object to be closed */
 )
 {
@@ -4363,7 +4363,7 @@ FRESULT f_closedir (
 /* Read Directory Entries in Sequence                                    */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_readdir (
+FRESULT ff_readdir (
     DIR* dp,            /* Pointer to the open directory object */
     FILINFO* fno        /* Pointer to file information to return */
 )
@@ -4399,7 +4399,7 @@ FRESULT f_readdir (
 /* Find Next File                                                        */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_findnext (
+FRESULT ff_findnext (
     DIR* dp,        /* Pointer to the open directory object */
     FILINFO* fno    /* Pointer to the file information structure */
 )
@@ -4408,7 +4408,7 @@ FRESULT f_findnext (
 
 
     for (;;) {
-        res = f_readdir(dp, fno);       /* Get a directory item */
+        res = ff_readdir(dp, fno);       /* Get a directory item */
         if (res != FR_OK || !fno || !fno->fname[0]) break;  /* Terminate if any error or end of directory */
         if (pattern_matching(dp->pat, fno->fname, 0, 0)) break;     /* Test for the file name */
 #if FF_USE_LFN && FF_USE_FIND == 2
@@ -4424,7 +4424,7 @@ FRESULT f_findnext (
 /* Find First File                                                       */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_findfirst (
+FRESULT ff_findfirst (
     DIR* dp,                /* Pointer to the blank directory object */
     FILINFO* fno,           /* Pointer to the file information structure */
     const TCHAR* path,      /* Pointer to the directory to open */
@@ -4435,9 +4435,9 @@ FRESULT f_findfirst (
 
 
     dp->pat = pattern;      /* Save pointer to pattern string */
-    res = f_opendir(dp, path);      /* Open the target directory */
+    res = ff_opendir(dp, path);      /* Open the target directory */
     if (res == FR_OK) {
-        res = f_findnext(dp, fno);  /* Find the first item */
+        res = ff_findnext(dp, fno);  /* Find the first item */
     }
     return res;
 }
@@ -4451,7 +4451,7 @@ FRESULT f_findfirst (
 /* Get File Status                                                       */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_stat (
+FRESULT ff_stat (
     FATFS *fs,
     const TCHAR* path,  /* Pointer to the file path */
     FILINFO* fno        /* Pointer to file information to return */
@@ -4488,7 +4488,7 @@ FRESULT f_stat (
 /* Get Number of Free Clusters                                           */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_getfree (
+FRESULT ff_getfree (
     FATFS *fs,
     DWORD* nclst        /* Pointer to a variable to return number of free clusters */
 )
@@ -4574,7 +4574,7 @@ FRESULT f_getfree (
 /* Truncate File                                                         */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_truncate (
+FRESULT ff_truncate (
     FIL* fp     /* Pointer to the file object */
 )
 {
@@ -4624,7 +4624,7 @@ FRESULT f_truncate (
 /* Delete a File/Directory                                               */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_unlink (
+FRESULT ff_unlink (
     FATFS *fs,
     const TCHAR* path       /* Pointer to the file or directory path */
 )
@@ -4718,7 +4718,7 @@ FRESULT f_unlink (
 /* Create a Directory                                                    */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_mkdir (
+FRESULT ff_mkdir (
     FATFS *fs,
     const TCHAR* path       /* Pointer to the directory path */
 )
@@ -4802,7 +4802,7 @@ FRESULT f_mkdir (
 /* Rename a File/Directory                                               */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_rename (
+FRESULT ff_rename (
     FATFS *fs,
     const TCHAR* path_old,  /* Pointer to the object name to be renamed */
     const TCHAR* path_new   /* Pointer to the new name */
@@ -4911,7 +4911,7 @@ FRESULT f_rename (
 /* Change Attribute                                                      */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_chmod (
+FRESULT ff_chmod (
     FATFS *fs,
     const TCHAR* path,  /* Pointer to the file path */
     BYTE attr,          /* Attribute bits */
@@ -4958,7 +4958,7 @@ FRESULT f_chmod (
 /* Change Timestamp                                                      */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_utime (
+FRESULT ff_utime (
     FATFS *fs,
     const TCHAR* path,  /* Pointer to the file/directory name */
     const FILINFO* fno  /* Pointer to the timestamp to be set */
@@ -5005,7 +5005,7 @@ FRESULT f_utime (
 /* Get Volume Label                                                      */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_getlabel (
+FRESULT ff_getlabel (
     FATFS *fs,
     TCHAR* label,       /* Buffer to store the volume label */
     DWORD* vsn          /* Variable to store the volume serial number */
@@ -5099,7 +5099,7 @@ FRESULT f_getlabel (
 /* Set Volume Label                                                      */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_setlabel (
+FRESULT ff_setlabel (
     FATFS *fs,
     const TCHAR* label  /* Volume label to set with heading logical drive number */
 )
@@ -5219,7 +5219,7 @@ FRESULT f_setlabel (
 /* Allocate a Contiguous Blocks to the File                              */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_expand (
+FRESULT ff_expand (
     FIL* fp,        /* Pointer to the file object */
     FSIZE_t fsz,    /* File size to be expanded to */
     BYTE opt        /* Operation mode 0:Find and prepare or 1:Find and allocate */
@@ -5309,7 +5309,7 @@ FRESULT f_expand (
 /* Forward Data to the Stream Directly                                   */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_forward (
+FRESULT ff_forward (
     FIL* fp,                        /* Pointer to the file object */
     UINT (*func)(const BYTE*,UINT), /* Pointer to the streaming function */
     UINT btf,                       /* Number of bytes to forward */
@@ -5380,7 +5380,7 @@ FRESULT f_forward (
 /* Create an FAT/exFAT volume                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_mkfs (
+FRESULT ff_mkfs (
     FATFS *fs,
     BYTE opt,           /* Format option */
     DWORD au,           /* Size of allocation unit (cluster) [byte] */
@@ -5842,7 +5842,7 @@ FRESULT f_mkfs (
 /* Create Partition Table on the Physical Drive                          */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_fdisk (
+FRESULT ff_fdisk (
     void *pdrv,         /* Physical drive number */
     const DWORD* szt,   /* Pointer to the size table for each partitions */
     void* work          /* Pointer to the working buffer (null: use heap memory) */
@@ -5921,7 +5921,7 @@ FRESULT f_fdisk (
 /* Set Active Codepage for the Path Name                                 */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_setcp (
+FRESULT ff_setcp (
     WORD cp     /* Value to be set as active code page */
 )
 {

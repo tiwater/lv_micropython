@@ -131,10 +131,10 @@
 
 // extended modules
 #ifndef MICROPY_PY_BLUETOOTH
-#define MICROPY_PY_BLUETOOTH                (1)
+#define MICROPY_PY_BLUETOOTH                (0)
 #define MICROPY_PY_BLUETOOTH_ENABLE_CENTRAL_MODE (1)
-#define MICROPY_BLUETOOTH_NIMBLE            (1)
-#define MICROPY_BLUETOOTH_NIMBLE_BINDINGS_ONLY (1)
+#define MICROPY_BLUETOOTH_NIMBLE            (0)
+#define MICROPY_BLUETOOTH_NIMBLE_BINDINGS_ONLY (0)
 #endif
 #define MICROPY_PY_UASYNCIO                 (1)
 #define MICROPY_PY_UCTYPES                  (1)
@@ -216,12 +216,14 @@ extern const struct _mp_obj_module_t mp_module_usocket;
 extern const struct _mp_obj_module_t mp_module_machine;
 extern const struct _mp_obj_module_t mp_module_network;
 extern const struct _mp_obj_module_t mp_module_onewire;
+extern const struct _mp_obj_module_t audio_module;
 extern const struct _mp_obj_module_t mp_module_lvgl;
 extern const struct _mp_obj_module_t mp_module_espidf;
 extern const struct _mp_obj_module_t mp_module_rtch;
 extern const struct _mp_obj_module_t mp_module_lodepng;
-// extern const struct _mp_obj_module_t mp_module_ILI9341;
-// extern const struct _mp_obj_module_t mp_module_xpt2046;
+extern const struct _mp_obj_module_t mp_module_ILI9341;
+extern const struct _mp_obj_module_t mp_module_xpt2046;
+extern const struct _mp_obj_module_t mp_module_t1;
 
 #if MICROPY_PY_LVGL
 #define MICROPY_PORT_LVGL_DEF \
@@ -265,6 +267,8 @@ extern void lv_deinit(void);
     { MP_OBJ_NEW_QSTR(MP_QSTR_machine), (mp_obj_t)&mp_module_machine }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR_network), (mp_obj_t)&mp_module_network }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR__onewire), (mp_obj_t)&mp_module_onewire }, \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_audio), (mp_obj_t)&audio_module }, \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_t1), (mp_obj_t)&mp_module_t1}, \
     MICROPY_PORT_LVGL_DEF \
     MICROPY_PORT_ESPIDF_DEF \
     MICROPY_PORT_LODEPNG_DEF \

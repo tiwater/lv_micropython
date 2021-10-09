@@ -44,8 +44,10 @@ set(MICROPY_SOURCE_EXTMOD
     ${MICROPY_EXTMOD_DIR}/vfs_posix_file.c
     ${MICROPY_EXTMOD_DIR}/vfs_reader.c
     ${MICROPY_EXTMOD_DIR}/virtpin.c
-    ${MICROPY_EXTMOD_DIR}/nimble/modbluetooth_nimble.c
+#    ${MICROPY_EXTMOD_DIR}/nimble/modbluetooth_nimble.c
 )
+
+include(${MICROPY_EXTMOD_DIR}/t1/t1.cmake)
 
 # Library for btree module and associated code
 

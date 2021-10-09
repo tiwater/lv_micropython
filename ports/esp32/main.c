@@ -33,6 +33,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
+#include "esp_heap_caps_init.h"
 #include "nvs_flash.h"
 #include "esp_task.h"
 #include "soc/cpu.h"
@@ -108,7 +109,12 @@ void mp_task(void *pvParameter) {
             break;
         case ESP_SPIRAM_SIZE_32MBITS:
         case ESP_SPIRAM_SIZE_64MBITS:
-            mp_task_heap_size = 4 * 1024 * 1024;
+            mp_task_heap_size = 3 * 1024 * 1024;
+#if CONFIG_SPIRAM_USE_CAPS_ALLOC
+            mp_task_heap = heap_caps_malloc(mp_task_heap_size, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+#else
+            mp_task_heap = malloc(mp_task_heap_size);
+#endif
             break;
         default:
             // No SPIRAM, fallback to normal allocation
@@ -128,6 +134,7 @@ void mp_task(void *pvParameter) {
         mp_task_heap_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
         mp_task_heap = malloc(mp_task_heap_size);
     }
+    heap_caps_add_region((intptr_t)(mp_task_heap + 3 * 1024 * 1024), (intptr_t)(mp_task_heap + 4 * 1024 * 1024 - 1));
     #else
     // Allocate the uPy heap using malloc and get the largest available region
     size_t mp_task_heap_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);

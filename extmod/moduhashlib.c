@@ -113,6 +113,13 @@ STATIC mp_obj_t uhashlib_sha256_digest(mp_obj_t self_in) {
     return mp_obj_new_str_from_vstr(&mp_type_bytes, &vstr);
 }
 
+STATIC mp_obj_t uhashlib_sha256_copy(mp_obj_t self_in) {
+    mp_obj_hash_t *o = m_new_obj_var(mp_obj_hash_t, char, sizeof(mbedtls_sha256_context));
+    memcpy(o, self_in, sizeof(*o) + sizeof(mbedtls_sha256_context));
+    return MP_OBJ_FROM_PTR(o);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(uhashlib_sha256_copy_obj, uhashlib_sha256_copy);
+
 #else
 
 #include "lib/crypto-algorithms/sha256.c"
@@ -155,6 +162,10 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(uhashlib_sha256_digest_obj, uhashlib_sha256_dig
 STATIC const mp_rom_map_elem_t uhashlib_sha256_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_update), MP_ROM_PTR(&uhashlib_sha256_update_obj) },
     { MP_ROM_QSTR(MP_QSTR_digest), MP_ROM_PTR(&uhashlib_sha256_digest_obj) },
+    { MP_ROM_QSTR(MP_QSTR_copy), MP_ROM_PTR(&uhashlib_sha256_copy_obj) },
+    { MP_ROM_QSTR(MP_QSTR_digest_size), MP_ROM_INT(32) },
+    { MP_ROM_QSTR(MP_QSTR_block_size), MP_ROM_INT(64) },
+
 };
 
 STATIC MP_DEFINE_CONST_DICT(uhashlib_sha256_locals_dict, uhashlib_sha256_locals_dict_table);
