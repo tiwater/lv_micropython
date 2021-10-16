@@ -245,7 +245,7 @@ static const WCHAR uc869[] = {  /*  CP869(Greek 2) to Unicode conversion table *
 #endif
 
 
-
+#if 0
 
 /*------------------------------------------------------------------------*/
 /* OEM <==> Unicode conversions for static code page configuration        */
@@ -623,5 +623,6 @@ DWORD ff_wtoupper ( /* Returns up-converted code point */
     return uni;
 }
 
+#endif
 
 #endif /* #if FF_USE_LFN */
