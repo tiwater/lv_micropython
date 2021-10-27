@@ -47,7 +47,7 @@ set(MICROPY_SOURCE_EXTMOD
 #    ${MICROPY_EXTMOD_DIR}/nimble/modbluetooth_nimble.c
 )
 
-include(${MICROPY_EXTMOD_DIR}/t1/t1.cmake)
+include($ENV{YANGTZE_PATH}/extmod/mkrules.cmake)
 
 # Library for btree module and associated code
 

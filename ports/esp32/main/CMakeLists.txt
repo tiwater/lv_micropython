@@ -94,7 +94,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/machine_sdcard.c
 )
 
-include(${MOD_T1_DIR}/mp_mod_t1.cmake)
+include(${MOD_T1_DIR}/mkrules.cmake)
 include(${MICROPY_ADF_MOD_DIR}/mp_src.cmake)
 include(${LLSYNC_PATH}/mkrules.cmake)
 
