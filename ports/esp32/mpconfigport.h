@@ -225,6 +225,7 @@ extern const struct _mp_obj_module_t mp_module_lodepng;
 extern const struct _mp_obj_module_t mp_module_ILI9341;
 extern const struct _mp_obj_module_t mp_module_xpt2046;
 extern const struct _mp_obj_module_t mp_module_llsync;
+extern const struct _mp_obj_module_t mp_module_st;
 
 #if MICROPY_PY_LVGL
 #define MICROPY_PORT_LVGL_DEF \
@@ -270,6 +271,7 @@ extern void lv_deinit(void);
     { MP_OBJ_NEW_QSTR(MP_QSTR__onewire), (mp_obj_t)&mp_module_onewire }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR_audio), (mp_obj_t)&audio_module }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR_llsync), (mp_obj_t)&mp_module_llsync}, \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_st), (mp_obj_t)&mp_module_st}, \
     MICROPY_PORT_LVGL_DEF \
     MICROPY_PORT_ESPIDF_DEF \
     MICROPY_PORT_LODEPNG_DEF \
