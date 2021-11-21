@@ -6,13 +6,10 @@ if(NOT MICROPY_DIR)
         get_filename_component(MICROPY_DIR ${PROJECT_DIR}/../.. ABSOLUTE)
     endif()
 endif()
-set(MOD_T1_DIR ${PROJECT_DIR}/mod-T1)
 
 if(NOT DEFINED MICROPY_ADF_MOD_DIR)
     get_filename_component(MICROPY_ADF_MOD_DIR $ENV{ADF_PATH}/micropython_adf/mod ABSOLUTE)
 endif()
-
-set(LLSYNC_PATH $ENV{LLSYNC_PATH})
 
 # Include core source components.
 include(${MICROPY_DIR}/py/py.cmake)
@@ -94,9 +91,13 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/machine_sdcard.c
 )
 
-include(${MOD_T1_DIR}/mkrules.cmake)
+if(DEFINED ENV{TARGET_PORT_DIR})
+include($ENV{TARGET_PORT_DIR}/cmod/mkrules.cmake)
+endif()
+if(DEFINED ENV{LLSYNC_PATH})
+include($ENV{LLSYNC_PATH}/mkrules.cmake)
+endif()
 include(${MICROPY_ADF_MOD_DIR}/mp_src.cmake)
-include(${LLSYNC_PATH}/mkrules.cmake)
 
 # Include LVGL bindings rules
 if(NOT CMAKE_BUILD_EARLY_EXPANSION)
