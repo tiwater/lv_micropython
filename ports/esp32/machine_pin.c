@@ -39,6 +39,7 @@
 #include "extmod/virtpin.h"
 #include "machine_rtc.h"
 #include "modesp32.h"
+#include "esp_sleep.h"
 
 #if CONFIG_IDF_TARGET_ESP32C3
 #include "hal/gpio_ll.h"
@@ -393,6 +394,30 @@ STATIC mp_obj_t machine_pin_hold_dis(mp_obj_t self_in) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(machine_pin_hold_dis_obj, machine_pin_hold_dis);
 
+// pin.enable_gpio_wakeup()
+STATIC mp_obj_t machine_pin_enable_gpio_wakeup(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    enum { ARG_trigger };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_trigger, MP_ARG_INT, {.u_int = GPIO_PIN_INTR_LOLEVEL | GPIO_PIN_INTR_HILEVEL} },
+    };
+    machine_pin_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    uint32_t trigger = args[ARG_trigger].u_int;
+    gpio_wakeup_enable(self->id, trigger);
+    esp_sleep_enable_gpio_wakeup();
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(machine_pin_enable_gpio_wakeup_obj, 1, machine_pin_enable_gpio_wakeup);
+
+// pin.disable_gpio_wakeup()
+STATIC mp_obj_t machine_pin_disable_gpio_wakeup(mp_obj_t self_in) {
+    machine_pin_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    gpio_wakeup_disable(self->id);
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(machine_pin_disable_gpio_wakeup_obj, machine_pin_disable_gpio_wakeup);
+
 // pin.irq(handler=None, trigger=IRQ_FALLING|IRQ_RISING)
 STATIC mp_obj_t machine_pin_irq(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     enum { ARG_handler, ARG_trigger, ARG_wake };
@@ -467,6 +492,8 @@ STATIC const mp_rom_map_elem_t machine_pin_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_irq), MP_ROM_PTR(&machine_pin_irq_obj) },
     { MP_ROM_QSTR(MP_QSTR_hold_en), MP_ROM_PTR(&machine_pin_hold_en_obj) },
     { MP_ROM_QSTR(MP_QSTR_hold_dis), MP_ROM_PTR(&machine_pin_hold_dis_obj) },
+    { MP_ROM_QSTR(MP_QSTR_enable_gpio_wakeup), MP_ROM_PTR(&machine_pin_enable_gpio_wakeup_obj) },
+    { MP_ROM_QSTR(MP_QSTR_disable_gpio_wakeup), MP_ROM_PTR(&machine_pin_disable_gpio_wakeup_obj) },
 
     // class constants
     { MP_ROM_QSTR(MP_QSTR_IN), MP_ROM_INT(GPIO_MODE_INPUT) },
