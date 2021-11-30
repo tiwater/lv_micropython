@@ -136,6 +136,7 @@
 #define MICROPY_BLUETOOTH_NIMBLE            (0)
 #define MICROPY_BLUETOOTH_NIMBLE_BINDINGS_ONLY (0)
 #endif
+#define MICROPY_EPOCH_IS_1970               (1)
 #define MICROPY_PY_UASYNCIO                 (1)
 #define MICROPY_PY_UCTYPES                  (1)
 #define MICROPY_PY_UZLIB                    (1)
