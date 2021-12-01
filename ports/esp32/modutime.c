@@ -45,7 +45,7 @@ STATIC mp_obj_t time_gmtime_ex(bool localtime, size_t n_args, const mp_obj_t *ar
         struct timeval tv;
         gettimeofday(&tv, NULL);
 #if CONFIG_IDF_TARGET_ESP32
-        seconds = tv.tv_sec + (localtime ? mod_offset_sec_by_tz() : 0);
+        seconds = tv.tv_sec + (localtime ? time_offset_sec_by_tz() : 0);
 #else
         seconds = tv.tv_sec;
 #endif
