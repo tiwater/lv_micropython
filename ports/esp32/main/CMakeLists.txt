@@ -79,6 +79,7 @@ set(MICROPY_SOURCE_PORT
 #    ${PROJECT_DIR}/mpnimbleport.c
     ${PROJECT_DIR}/modsocket.c
     ${PROJECT_DIR}/modesp.c
+    ${PROJECT_DIR}/esp32_himem.c
     ${PROJECT_DIR}/esp32_nvs.c
     ${PROJECT_DIR}/esp32_partition.c
     ${PROJECT_DIR}/esp32_rmt.c
