@@ -11,4 +11,9 @@ int8_t mod_gettimezone(void);
 bool mod_settimestamp(time_t ts);
 time_t mod_gettimestamp(void);
 
+static inline time_t mod_offset_sec_by_tz(void)
+{
+    return mod_gettimezone() * (60 * 60);
+}
+
 #endif // __ESP32_TIME_H
