@@ -58,5 +58,5 @@ time_t mod_gettimestamp(void)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return tv.tv_sec + mod_offset_sec_by_tz();
+    return tv.tv_sec;
 }
