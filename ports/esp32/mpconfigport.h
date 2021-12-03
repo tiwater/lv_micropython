@@ -59,7 +59,7 @@
 #define MICROPY_USE_INTERNAL_ERRNO          (0) // errno.h from xtensa-esp32-elf/sys-include/sys
 #define MICROPY_USE_INTERNAL_PRINTF         (0) // ESP32 SDK requires its own printf
 #define MICROPY_ENABLE_SCHEDULER            (1)
-#define MICROPY_SCHEDULER_DEPTH             (32) // TODO masa change depth from 8 to 32, is't good for this change ?
+#define MICROPY_SCHEDULER_DEPTH             (64) // TODO masa change depth from 8 to 32, is't good for this change ?
 #define MICROPY_VFS                         (1)
 
 // control over Python builtins
