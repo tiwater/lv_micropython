@@ -1,4 +1,4 @@
-# Combine bootloader, partition table and application into a final binary.
+# Combine bootloader, partition table, nvs, and application into a final binary.
 
 import os, sys
 
@@ -8,7 +8,8 @@ import gen_esp32part
 
 OFFSET_BOOTLOADER_DEFAULT = 0x1000
 OFFSET_PARTITIONS_DEFAULT = 0x8000
-
+MAX_SIZE_PARTITIONS_DEFAULT = 0x1000
+OFFSET_APP = 0x10000
 
 def load_sdkconfig_hex_value(filename, value, default):
     value = "CONFIG_" + value + "="
@@ -28,8 +29,9 @@ def load_partition_table(filename):
 arg_sdkconfig = sys.argv[1]
 arg_bootloader_bin = sys.argv[2]
 arg_partitions_bin = sys.argv[3]
-arg_application_bin = sys.argv[4]
-arg_output_bin = sys.argv[5]
+arg_nvs_bin = sys.argv[4]
+arg_app_bin = sys.argv[5]
+arg_output_bin = sys.argv[6]
 
 # Load required sdkconfig values.
 offset_bootloader = load_sdkconfig_hex_value(
@@ -43,24 +45,20 @@ offset_partitions = load_sdkconfig_hex_value(
 partition_table = load_partition_table(arg_partitions_bin)
 
 max_size_bootloader = offset_partitions - offset_bootloader
-max_size_partitions = 0
-offset_application = 0
-max_size_application = 0
-
-# Inspect the partition table to find offsets and maximum sizes.
-for part in partition_table:
-    if part.name == "nvs":
-        max_size_partitions = part.offset - offset_partitions
-    elif part.type == gen_esp32part.APP_TYPE and offset_application == 0:
-        offset_application = part.offset
-        max_size_application = part.size
+max_size_partitions = MAX_SIZE_PARTITIONS_DEFAULT
 
 # Define the input files, their location and maximum size.
 files_in = [
     ("bootloader", offset_bootloader, max_size_bootloader, arg_bootloader_bin),
     ("partitions", offset_partitions, max_size_partitions, arg_partitions_bin),
-    ("application", offset_application, max_size_application, arg_application_bin),
 ]
+# Inspect the partition table to find offsets and maximum sizes.
+for part in partition_table:
+    if part.name == "nvs":
+        files_in.append(("nvs", part.offset, part.size, arg_nvs_bin))
+    elif part.type == gen_esp32part.APP_TYPE and part.offset == OFFSET_APP:
+        files_in.append(("app", part.offset, part.size, arg_app_bin))
+
 file_out = arg_output_bin
 
 # Write output file with combined firmware.
