@@ -30,8 +30,9 @@ arg_sdkconfig = sys.argv[1]
 arg_bootloader_bin = sys.argv[2]
 arg_partitions_bin = sys.argv[3]
 arg_nvs_bin = sys.argv[4]
-arg_app_bin = sys.argv[5]
-arg_output_bin = sys.argv[6]
+arg_nvs_key_bin = sys.argv[5]
+arg_app_bin = sys.argv[6]
+arg_output_bin = sys.argv[7]
 
 # Load required sdkconfig values.
 offset_bootloader = load_sdkconfig_hex_value(
@@ -56,6 +57,8 @@ files_in = [
 for part in partition_table:
     if part.name == "nvs":
         files_in.append(("nvs", part.offset, part.size, arg_nvs_bin))
+    elif part.name == "nvs_key":
+        files_in.append(("nvs_key", part.offset, part.size, arg_nvs_key_bin))
     elif part.type == gen_esp32part.APP_TYPE and part.offset == OFFSET_APP:
         files_in.append(("app", part.offset, part.size, arg_app_bin))
 
