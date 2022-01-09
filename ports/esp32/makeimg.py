@@ -71,18 +71,21 @@ with open(file_out, "wb") as fout:
         assert offset >= cur_offset
         fout.write(b"\xff" * (offset - cur_offset))
         cur_offset = offset
-        with open(file_in, "rb") as fin:
-            data = fin.read()
-            fout.write(data)
-            cur_offset += len(data)
-            print(
-                "%-12s@0x%06x % 8d  (% 8d remaining)"
-                % (name, offset, len(data), max_size - len(data))
-            )
-            if len(data) > max_size:
+        try:
+            with open(file_in, "rb") as fin:
+                data = fin.read()
+                fout.write(data)
+                cur_offset += len(data)
                 print(
-                    "ERROR: %s overflows allocated space of %d bytes by %d bytes"
-                    % (name, max_size, len(data) - max_size)
+                    "%-12s@0x%06x % 8d  (% 8d remaining)"
+                    % (name, offset, len(data), max_size - len(data))
                 )
-                sys.exit(1)
+                if len(data) > max_size:
+                    print(
+                        "ERROR: %s overflows allocated space of %d bytes by %d bytes"
+                        % (name, max_size, len(data) - max_size)
+                    )
+                    sys.exit(1)
+        except FileNotFoundError:
+            pass
     print("%-22s% 8d" % ("total", cur_offset))
