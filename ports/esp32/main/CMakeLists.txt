@@ -114,6 +114,7 @@ set(MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_LIB}
     ${MICROPY_SOURCE_PORT}
     ${MICROPY_SOURCE_BOARD}
+    ${LV_SRC}
     ${LLSYNC_SRC}
 )
 
@@ -188,6 +189,7 @@ idf_component_register(
         ${MICROPY_SOURCE_DRIVERS}
         ${MICROPY_SOURCE_PORT}
         ${MICROPY_SOURCE_BOARD}
+        ${LV_SRC}
         ${LLSYNC_SRC}
     INCLUDE_DIRS
         ${MICROPY_INC_CORE}
