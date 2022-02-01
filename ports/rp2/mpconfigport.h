@@ -194,8 +194,22 @@ extern const struct _mod_network_nic_type_t mod_network_nic_type_nina;
     { MP_OBJ_NEW_QSTR(MP_QSTR__rp2), (mp_obj_t)&mp_module_rp2 }, \
     { MP_ROM_QSTR(MP_QSTR_uos), MP_ROM_PTR(&mp_module_uos) }, \
     { MP_ROM_QSTR(MP_QSTR_utime), MP_ROM_PTR(&mp_module_utime) }, \
+    MICROPY_PORT_LVGL_DEF \
+    MICROPY_PORT_LODEPNG_DEF \
     SOCKET_BUILTIN_MODULE \
     NETWORK_BUILTIN_MODULE \
+
+#if MICROPY_PY_LVGL
+#ifndef MICROPY_INCLUDED_PY_MPSTATE_H
+#define MICROPY_INCLUDED_PY_MPSTATE_H
+#include "lib/lv_bindings/lvgl/src/misc/lv_gc.h"
+#undef MICROPY_INCLUDED_PY_MPSTATE_H
+#else
+#include "lib/lv_bindings/lvgl/src/misc/lv_gc.h"
+#endif
+#else
+#define LV_ROOTS
+#endif
 
 #define MICROPY_PORT_NETWORK_INTERFACES \
     MICROPY_HW_NIC_NINAW10  \
