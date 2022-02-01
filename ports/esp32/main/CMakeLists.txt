@@ -70,12 +70,12 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/machine_dac.c
     ${PROJECT_DIR}/machine_i2c.c
     ${PROJECT_DIR}/machine_i2s.c
-    ${PROJECT_DIR}/machine_pwm.c
     ${PROJECT_DIR}/machine_uart.c
     ${PROJECT_DIR}/modmachine.c
     ${PROJECT_DIR}/modnetwork.c
     ${PROJECT_DIR}/network_lan.c
     ${PROJECT_DIR}/network_ppp.c
+    ${PROJECT_DIR}/network_wlan.c
 #    ${PROJECT_DIR}/mpnimbleport.c
     ${PROJECT_DIR}/modsocket.c
     ${PROJECT_DIR}/modesp.c
@@ -113,8 +113,8 @@ set(MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_SHARED}
     ${MICROPY_SOURCE_LIB}
     ${MICROPY_SOURCE_PORT}
+    ${MICROPY_SOURCE_BOARD}
     ${LLSYNC_SRC}
-    ${LV_SRC}
 )
 
 set(IDF_COMPONENTS
@@ -150,16 +150,16 @@ set(IDF_COMPONENTS
 
 include(${MICROPY_ADF_MOD_DIR}/mp_mod.cmake)
 
-if(IDF_VERSION_MINOR GREATER_EQUAL 1)
+if(IDF_VERSION_MINOR GREATER_EQUAL 1 OR IDF_VERSION_MAJOR GREATER_EQUAL 5)
     list(APPEND IDF_COMPONENTS esp_netif)
 endif()
 
-if(IDF_VERSION_MINOR GREATER_EQUAL 2)
+if(IDF_VERSION_MINOR GREATER_EQUAL 2 OR IDF_VERSION_MAJOR GREATER_EQUAL 5)
     list(APPEND IDF_COMPONENTS esp_system)
     list(APPEND IDF_COMPONENTS esp_timer)
 endif()
 
-if(IDF_VERSION_MINOR GREATER_EQUAL 3)
+if(IDF_VERSION_MINOR GREATER_EQUAL 3 OR IDF_VERSION_MAJOR GREATER_EQUAL 5)
     list(APPEND IDF_COMPONENTS esp_hw_support)
     list(APPEND IDF_COMPONENTS esp_pm)
     list(APPEND IDF_COMPONENTS hal)
@@ -187,8 +187,8 @@ idf_component_register(
         ${MICROPY_SOURCE_LIB}
         ${MICROPY_SOURCE_DRIVERS}
         ${MICROPY_SOURCE_PORT}
+        ${MICROPY_SOURCE_BOARD}
         ${LLSYNC_SRC}
-        ${LV_SRC}
     INCLUDE_DIRS
         ${MICROPY_INC_CORE}
         ${MICROPY_INC_USERMOD}
@@ -237,7 +237,7 @@ foreach(comp ${IDF_COMPONENTS})
     micropy_gather_target_properties(__idf_${comp})
 endforeach()
 
-if(IDF_VERSION_MINOR GREATER_EQUAL 2)
+if(IDF_VERSION_MINOR GREATER_EQUAL 2 OR IDF_VERSION_MAJOR GREATER_EQUAL 5)
     # These paths cannot currently be found by the IDF_COMPONENTS search loop above,
     # so add them explicitly.
     list(APPEND MICROPY_CPP_INC_EXTRA ${IDF_PATH}/components/soc/soc/${IDF_TARGET}/include)
