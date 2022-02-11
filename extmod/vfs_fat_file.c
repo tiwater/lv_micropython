@@ -195,9 +195,22 @@ STATIC mp_obj_t file_open(fs_user_mount_t *vfs, const mp_obj_type_t *type, mp_ar
     pyb_file_obj_t *o = m_new_obj_with_finaliser(pyb_file_obj_t);
     o->base.type = type;
 
-    const char *fname = mp_obj_str_get_str(args[0].u_obj);
-    assert(vfs != NULL);
-    FRESULT res = ff_open(&vfs->fatfs, &o->fp, fname, mode);
+    FRESULT res = FR_OK;
+
+    if (args) {
+        mp_obj_t fno = args[0].u_obj;
+        if (mp_obj_is_qstr(fno)
+        || (mp_obj_is_obj(fno) && ((mp_obj_base_t *)MP_OBJ_TO_PTR(fno))->type)) {
+            const char *fname = mp_obj_str_get_str(args[0].u_obj);
+            assert(vfs != NULL);
+            res = ff_open(&vfs->fatfs, &o->fp, fname, mode);
+        } else {
+            res = FR_INVALID_OBJECT;
+        }
+    } else {
+        res = FR_INVALID_PARAMETER;
+    }
+
     if (res != FR_OK) {
         m_del_obj(pyb_file_obj_t, o);
         mp_raise_OSError(fresult_to_errno_table[res]);
