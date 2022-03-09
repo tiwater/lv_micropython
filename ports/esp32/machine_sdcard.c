@@ -310,6 +310,17 @@ STATIC mp_obj_t sd_info(mp_obj_t self_in) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(sd_info_obj, sd_info);
 
+STATIC mp_obj_t sd_status(mp_obj_t self_in) {
+    sdcard_card_obj_t *self = self_in;
+    uint32_t stat;
+    check_esp_err(sdcard_ensure_card_init((sdcard_card_obj_t *)self, false));
+    sdmmc_send_cmd_send_status_wo_lock(&self->card, &stat);
+    DEBUG_printf("sd-status=%d", stat);
+    return mp_obj_new_int(stat);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(sd_status_obj, sd_status);
+
+
 STATIC mp_obj_t machine_sdcard_readblocks(mp_obj_t self_in, mp_obj_t block_num, mp_obj_t buf) {
     sdcard_card_obj_t *self = self_in;
     mp_buffer_info_t bufinfo;
@@ -384,6 +395,7 @@ STATIC mp_obj_t machine_sdcard_ioctl(mp_obj_t self_in, mp_obj_t cmd_in, mp_obj_t
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(machine_sdcard_ioctl_obj, machine_sdcard_ioctl);
 
 STATIC const mp_rom_map_elem_t machine_sdcard_locals_dict_table[] = {
+    { MP_ROM_QSTR(MP_QSTR_status), MP_ROM_PTR(&sd_status_obj) },
     { MP_ROM_QSTR(MP_QSTR_info), MP_ROM_PTR(&sd_info_obj) },
     { MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&sd_deinit_obj) },
     { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&sd_deinit_obj) },
