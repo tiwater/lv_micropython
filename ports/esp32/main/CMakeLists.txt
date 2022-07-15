@@ -147,6 +147,7 @@ set(IDF_COMPONENTS
     esp_http_client
     esp-tls
     nghttp
+    esp_adc_cal
 )
 
 include(${MICROPY_ADF_MOD_DIR}/mp_mod.cmake)
