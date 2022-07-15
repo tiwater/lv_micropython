@@ -35,13 +35,15 @@
 #include "py/runtime.h"
 #include "py/mphal.h"
 #include "modmachine.h"
+#include "esp_adc_cal.h"
 
+#define NO_OF_SAMPLES   64
 typedef struct _madc_obj_t {
     mp_obj_base_t base;
     gpio_num_t gpio_id;
     adc1_channel_t adc1_id;
 } madc_obj_t;
-
+static esp_adc_cal_characteristics_t adc_chars;
 STATIC const madc_obj_t madc_obj[] = {
     #if CONFIG_IDF_TARGET_ESP32
     {{&machine_adc_type}, GPIO_NUM_36, ADC1_CHANNEL_0},
@@ -84,6 +86,7 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
         #else
         adc1_config_width(ADC_WIDTH_BIT_12);
         #endif
+        esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_11db, ADC_WIDTH_BIT_12, 1100, &adc_chars);
         adc_bit_width = 12;
         initialized = 1;
     }
@@ -132,6 +135,20 @@ STATIC mp_obj_t madc_read(mp_obj_t self_in) {
     return MP_OBJ_NEW_SMALL_INT(val);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(madc_read_obj, madc_read);
+
+// Legacy method
+STATIC mp_obj_t madc_read_voltage(mp_obj_t self_in) {
+    madc_obj_t *self = self_in;
+    uint32_t adc_reading = 0;
+    for (int i = 0; i < NO_OF_SAMPLES; i++) {
+        adc_reading += adc1_get_raw(self->adc1_id);
+    }
+    adc_reading /= NO_OF_SAMPLES;
+    //Convert adc_reading to voltage in mV
+    uint32_t voltage = esp_adc_cal_raw_to_voltage(adc_reading, &adc_chars);
+    return MP_OBJ_NEW_SMALL_INT(voltage);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(madc_read_voltage_obj, madc_read_voltage);
 
 STATIC mp_obj_t madc_atten(mp_obj_t self_in, mp_obj_t atten_in) {
     madc_obj_t *self = self_in;
@@ -185,6 +202,7 @@ STATIC const mp_rom_map_elem_t madc_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_read_u16), MP_ROM_PTR(&madc_read_u16_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&madc_read_obj) },
+    { MP_ROM_QSTR(MP_QSTR_read_voltage), MP_ROM_PTR(&madc_read_voltage_obj) },
     { MP_ROM_QSTR(MP_QSTR_atten), MP_ROM_PTR(&madc_atten_obj) },
     { MP_ROM_QSTR(MP_QSTR_width), MP_ROM_PTR(&madc_width_obj) },
 
