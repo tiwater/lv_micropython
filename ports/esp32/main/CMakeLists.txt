@@ -148,6 +148,8 @@ set(IDF_COMPONENTS
     esp-tls
     nghttp
     esp_adc_cal
+    qloud
+    json
 )
 
 include(${MICROPY_ADF_MOD_DIR}/mp_mod.cmake)
