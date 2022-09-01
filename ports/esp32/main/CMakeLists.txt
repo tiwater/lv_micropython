@@ -148,7 +148,7 @@ set(IDF_COMPONENTS
     esp-tls
     nghttp
     esp_adc_cal
-    qloud
+    qcloud
     json
 )
 
